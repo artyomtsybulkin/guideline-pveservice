@@ -1,0 +1,59 @@
+---
+# base role: OS updates and baseline packages common to every service VM.
+# Template OS is Rocky/AlmaLinux/Oracle Linux 10+ (RHEL family); see
+# ../../../../../instructions/instruction-01.txt for the source list.
+
+- name: Enable EPEL (Oracle Linux)
+  ansible.builtin.dnf:
+    name: oracle-epel-release-el10
+    state: present
+  when: ansible_distribution == "OracleLinux"
+
+- name: Enable EPEL (Rocky Linux / AlmaLinux)
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  when: ansible_distribution in ["Rocky", "AlmaLinux"]
+
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_cache: true
+
+- name: Ensure baseline packages are present
+  ansible.builtin.dnf:
+    name:
+      - qemu-guest-agent
+      - kernel-modules-extra
+      - dnf-automatic
+      - nc
+      - ncdu
+      - htop
+      - jq
+      - nano
+      - curl
+      - wget
+      - tree
+      - nmap
+      - shadow-utils
+      - ethtool
+      - dnf-plugins-core
+      - glibc-all-langpacks
+      - openssl
+      - mtr
+    state: present
+
+# Terraform discovers the VM's IPv4 through this agent (see
+# ../../../../terraform/main.tf), so it must be running, not just installed.
+- name: Enable and start qemu-guest-agent
+  ansible.builtin.systemd:
+    name: qemu-guest-agent
+    enabled: true
+    state: started
+
+- name: Install zram-generator
+  ansible.builtin.dnf:
+    name: zram-generator
+    state: present
+  when: base_install_zram

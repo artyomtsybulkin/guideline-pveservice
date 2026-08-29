@@ -1,0 +1,8 @@
+# Entry point playbook: applies roles to the freshly cloned VM.
+---
+- name: Configure freshly cloned Proxmox VM
+  hosts: pve_service
+  become: true
+
+  roles:
+    - base

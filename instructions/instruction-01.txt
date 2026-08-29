@@ -1,0 +1,24 @@
+# Linux general instructions
+
+## 1. Packages
+
+### 1.1 Oracle Linux 10+ specific
+
+dnf install -y oracle-epel-release-el10 && dnf update -y
+
+### 1.2 Almalinux or RockyLinux both 10+ specific
+
+dnf install -y epel-release && dnf update -y
+
+### 1.3 Common packages
+
+dnf install qemu-guest-agent kernel-modules-extra
+
+dnf install -y dnf-automatic nc ncdu htop jq nano curl wget tree nmap \
+    shadow-utils ethtool dnf-plugins-core glibc-all-langpacks openssl mtr
+
+### 1.4 ZRAM
+
+For Docker instance don't install, in other cases install:
+
+dnf install zram-generator

@@ -1,0 +1,18 @@
+# Entry point GitLab CI/CD file (GitLab only auto-discovers a root
+# .gitlab-ci.yml). Delegates to whichever variant's own pipeline is
+# relevant: on push, only the variant whose files changed runs; to deploy
+# on demand regardless of what changed, run a pipeline with the CI/CD
+# variable VM_TARGET set to "vm-linux-regular" or "vm-docker-regular".
+# Requires GitLab >= 14.2 for `rules:` under `include:`.
+
+include:
+  - local: vm-linux-regular/.gitlab-ci.yml
+    rules:
+      - if: '$VM_TARGET == "vm-linux-regular"'
+      - changes:
+          - vm-linux-regular/**/*
+  - local: vm-docker-regular/.gitlab-ci.yml
+    rules:
+      - if: '$VM_TARGET == "vm-docker-regular"'
+      - changes:
+          - vm-docker-regular/**/*

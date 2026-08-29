@@ -1,0 +1,16 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored —
+# never commit real endpoints/tokens.
+
+pve_api_endpoint = "https://pve.example.local:8006/"
+pve_api_token    = "terraform@pve!terraform-token=00000000-0000-0000-0000-000000000000"
+pve_tls_insecure = false
+
+pve_node          = "pve-node1"
+vm_template_name  = "vm-template-name"
+vm_name           = "svc-example-01"
+vm_id             = null
+vm_cores          = 2
+vm_memory         = 2048
+vm_disk_size      = 20
+vm_datastore_id   = "local-lvm"
+vm_network_bridge = "vmbr0"

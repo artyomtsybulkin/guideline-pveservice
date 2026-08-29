@@ -1,0 +1,17 @@
+# Generated/local files that must never be committed.
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/terraform.tfvars
+terraform/*.tfplan
+
+# Ansible generated artifacts / local overrides
+ansible/inventory/inventory.ini
+ansible/group_vars/all.yml
+*.retry
+
+# CI job artifacts
+vm_ipv4_address.txt

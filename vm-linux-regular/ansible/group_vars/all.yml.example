@@ -1,0 +1,3 @@
+# Variables shared by every host in the inventory.
+# Copy to all.yml and adjust per-environment. all.yml is gitignored.
+service_name: example-service

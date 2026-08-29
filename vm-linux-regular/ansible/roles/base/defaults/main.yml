@@ -1,0 +1,4 @@
+---
+# Role defaults for base. Overridden per-variant in playbook.yml (e.g.
+# vm-docker-regular sets base_install_zram: false).
+base_install_zram: true
