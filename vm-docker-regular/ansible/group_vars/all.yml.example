@@ -1,3 +1,10 @@
 # Variables shared by every host in the inventory.
 # Copy to all.yml and adjust per-environment. all.yml is gitignored.
 service_name: example-service
+
+# Custom service/application/package roles to apply after
+# base/docker-ce/first-boot. See ../roles/README.md for how to add one.
+# Empty by default — playbook.yml treats an unset service_roles the same
+# as [].
+# service_roles:
+#   - my-service

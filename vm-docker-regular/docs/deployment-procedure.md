@@ -38,7 +38,10 @@ Linux 10+.
      because it deletes the SSH host keys Ansible's own connection is
      using; a marker file (`/etc/pveservice-first-boot-done`) keeps it to
      exactly one run. **Reboot the VM once after initial provisioning**
-     (whenever convenient) to actually trigger it.
+     (whenever convenient) to actually trigger it,
+   - any custom roles listed in `service_roles` (`ansible/group_vars/all.yml`)
+     — see [Adding a service/application](#adding-a-serviceapplication)
+     below.
 
 `scripts/deploy.sh` runs steps 1–5 locally in order (terraform apply, then
 `scripts/configure.sh` for the Ansible half). `scripts/destroy.sh` tears the
@@ -81,12 +84,20 @@ and `CI_JOB_TOKEN` are provided automatically by GitLab; running
 hand (with `GITLAB_TOKEN` — a personal/project access token — standing in
 for `CI_JOB_TOKEN`).
 
-## Adding a new service on top of this template
+## Adding a service/application
 
-Fork/copy this repo per service, then:
-- adjust `terraform/terraform.tfvars` (copy from `.example`) for the
-  service's VM sizing and name,
-- add service-specific roles under `ansible/roles/` and reference them
-  from `ansible/playbook.yml`,
-- point `SECRET_BACKEND` / the backend-specific env vars in
-  `scripts/fetch-secret.sh` at that service's key in the secret store.
+Drop a new role under `ansible/roles/<name>/` (same layout as
+`base`/`docker-ce`/`first-boot` — typically a docker-compose stack or a
+container's systemd unit) and list it in `ansible/group_vars/all.yml`'s
+`service_roles`:
+
+```yaml
+service_roles:
+  - my-service
+```
+
+`ansible/playbook.yml` applies every role in `service_roles`, in order,
+after `base`, `docker-ce`, and `first-boot` (so Docker is already
+installed and running by the time your role runs) — no changes to the
+playbook itself needed. See
+[ansible/roles/README.md](../ansible/roles/README.md).

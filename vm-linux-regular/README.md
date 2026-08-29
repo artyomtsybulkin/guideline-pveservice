@@ -13,7 +13,9 @@ full walkthrough.
 - `terraform/` — clones `vm-template-name` via the Proxmox API, outputs the
   new VM's IPv4 address (via the QEMU guest agent)
 - `ansible/` — configures the VM over SSH as `fabricator` (`base` role:
-  package updates, base packages)
+  package updates, base packages). Add your own services/applications as
+  extra roles under `ansible/roles/` — see
+  [ansible/roles/README.md](ansible/roles/README.md)
 - `scripts/deploy.sh` — runs the full flow: terraform apply → fetch
   fabricator's private key from a secret store → wait for SSH → ansible-playbook
 - `scripts/destroy.sh` — tears the VM down

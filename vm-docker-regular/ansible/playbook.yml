@@ -1,4 +1,6 @@
-# Entry point playbook: applies roles to the freshly cloned VM.
+# Entry point playbook: applies roles to the freshly cloned VM, then any
+# custom service/application roles listed in group_vars/all.yml's
+# service_roles (see roles/README.md).
 ---
 - name: Configure freshly cloned Proxmox VM
   hosts: pve_service
@@ -8,3 +10,9 @@
     - base
     - docker-ce
     - first-boot
+
+  tasks:
+    - name: Apply custom service/application roles
+      ansible.builtin.include_role:
+        name: "{{ item }}"
+      loop: "{{ service_roles | default([]) }}"
