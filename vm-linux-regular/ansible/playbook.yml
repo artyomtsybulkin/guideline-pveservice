@@ -1,6 +1,7 @@
 # Entry point playbook: applies roles to the freshly cloned VM, then any
 # custom service/application roles listed in group_vars/all.yml's
-# service_roles (see roles/README.md).
+# service_roles (see roles/README.md), then copies files/ onto the target
+# (see ../docs/deployment-procedure.md#adding-custom-files).
 ---
 - name: Configure freshly cloned Proxmox VM
   hosts: pve_service
@@ -15,3 +16,16 @@
       ansible.builtin.include_role:
         name: "{{ item }}"
       loop: "{{ service_roles | default([]) }}"
+
+    - name: Check for a local files/ directory to copy to the target
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/files"
+      delegate_to: localhost
+      become: false
+      register: custom_files_dir
+
+    - name: Copy files/ onto the target, mirroring its paths
+      ansible.builtin.copy:
+        src: files/
+        dest: /
+      when: custom_files_dir.stat.exists

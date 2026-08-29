@@ -1,0 +1,17 @@
+# Placeholder from the guideline-pveservice template.
+#
+# ansible/files/ mirrors the target VM's filesystem: this file was placed
+# at ansible/files/opt/example/docker-compose.yml, so it lands at
+# /opt/example/docker-compose.yml on every VM this playbook configures.
+#
+# Dropping it here only copies the file — nothing runs `docker compose`
+# against it automatically. Add a role (ansible/roles/<name>/) that does
+# if you want that to happen.
+#
+# Once you've got a real compose file to drop here, delete this one (and
+# the opt/example/ directory, if it's now empty) — it's just a
+# placeholder. See "Adding custom files" in docs/deployment-procedure.md.
+
+services:
+  hello-world:
+    image: hello-world

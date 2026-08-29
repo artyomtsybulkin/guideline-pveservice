@@ -35,6 +35,9 @@ don't have one yet.
      provisioning** (whenever convenient) to actually trigger it,
    - any custom roles listed in `service_roles` (`ansible/group_vars/all.yml`)
      — see [Adding a service/application](#adding-a-serviceapplication)
+     below,
+   - anything dropped under `ansible/files/`, copied onto the target as
+     the last step — see [Adding custom files](#adding-custom-files)
      below.
 
 `scripts/deploy.sh` runs steps 1–5 locally in order (terraform apply, then
@@ -101,3 +104,24 @@ after `base`, `docker-ce`, and `first-boot` (so Docker is already
 installed and running by the time your role runs) — no changes to the
 playbook itself needed. See
 [ansible/roles/README.md](../ansible/roles/README.md).
+
+## Adding custom files
+
+For a config file or two that doesn't need a whole role: drop files
+under `ansible/files/`, **mirroring the target's absolute paths** — e.g.
+`ansible/files/opt/myapp/docker-compose.yml` lands at
+`/opt/myapp/docker-compose.yml` on the VM. `ansible/playbook.yml` copies
+the whole tree onto the target as its last step, whenever `ansible/files/`
+exists (skipped otherwise — nothing to configure if you don't need this).
+
+`ansible/files/opt/example/docker-compose.yml` ships as a placeholder
+demonstrating the convention (it lands at
+`/opt/example/docker-compose.yml`, but nothing runs `docker compose`
+against it automatically) — delete it once you've added your own files.
+
+Owner/group/mode aren't set explicitly, so files land owned by `root`
+(the play already runs as root via `become: true`) with their local
+permissions preserved. If a dropped file needs a service restarted to
+take effect, that's the service's own role's job (a handler, or a task
+that runs after this one) — this mechanism only copies files, nothing
+else.

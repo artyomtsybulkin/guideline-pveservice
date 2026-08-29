@@ -25,9 +25,15 @@ its `.gitlab-ci.yml` already assumes it's sitting at that repo's root.
      See [docs/deployment-procedure.md](docs/deployment-procedure.md) for
      exactly what each one is.
 
-3. **Add your own services/applications** (optional) — drop a role under
-   `ansible/roles/<name>/` and list it in `ansible/group_vars/all.yml`'s
-   `service_roles`. See [ansible/roles/README.md](ansible/roles/README.md).
+3. **Add your own services/applications** (optional):
+   - a role: drop it under `ansible/roles/<name>/` and list it in
+     `ansible/group_vars/all.yml`'s `service_roles`. See
+     [ansible/roles/README.md](ansible/roles/README.md).
+   - just a file or two: create `ansible/files/` and drop files there
+     mirroring the target's absolute paths (e.g.
+     `ansible/files/etc/nginx/nginx.conf` → `/etc/nginx/nginx.conf`) —
+     copied onto the VM automatically. See "Adding custom files" in
+     [docs/deployment-procedure.md](docs/deployment-procedure.md).
 
 4. **Run the pipeline** — push to the repo (or trigger one manually) and
    run the jobs in order: `validate` (automatic) → `plan` → `apply` →

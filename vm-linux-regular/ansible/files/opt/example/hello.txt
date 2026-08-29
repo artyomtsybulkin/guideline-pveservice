@@ -1,0 +1,10 @@
+This is a placeholder from the guideline-pveservice template.
+
+ansible/files/ mirrors the target VM's filesystem: this file was placed
+at ansible/files/opt/example/hello.txt, so it lands at
+/opt/example/hello.txt on every VM this playbook configures.
+
+Once you've got real files of your own to drop here, delete this one
+(and the opt/example/ directory, if it's now empty) — it's just a
+placeholder and does nothing on its own. See "Adding custom files" in
+this repo's docs/deployment-procedure.md for the full convention.
