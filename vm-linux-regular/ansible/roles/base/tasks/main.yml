@@ -1,10 +1,9 @@
 ---
 # base role: OS updates and baseline packages common to every service VM.
-# Template OS is Rocky/AlmaLinux/Oracle Linux 10+ (RHEL family); see
-# ../../../../../instructions/instruction-01.txt for the source list.
+# Template OS is Rocky/AlmaLinux/Oracle Linux 10+ (RHEL family).
 #
-# vm-docker-regular has its own copy of this file with the zram-generator
-# task removed (not installed on Docker hosts, per that same instruction).
+# The docker variant of this repo has its own copy of this file with the
+# zram-generator task removed (not installed on Docker hosts).
 
 - name: Enable EPEL (Oracle Linux)
   ansible.builtin.dnf:

@@ -13,10 +13,13 @@ configures it over SSH as the `fabricator` user.
 - [vm-windows-regular/](vm-windows-regular/) — Windows, Terraform + GitLab
   CI only for now, no Ansible/WinRM half yet.
 
-Each variant is self-contained (own `terraform/`, `scripts/`,
-`.gitlab-ci.yml`, and `ansible/` where applicable) and can be copied out on
-its own for a new service. See the README and `docs/deployment-procedure.md`
-inside each for details, and
+This is a **template source**, not something you run CI against directly:
+each variant is fully self-contained (own `terraform/`, `scripts/`,
+`.gitlab-ci.yml`, and `ansible/` where applicable) and is meant to be
+**copied out to its own dedicated GitLab repo** — its `.gitlab-ci.yml`
+already assumes it will be sitting at that new repo's root. See the
+README and `docs/deployment-procedure.md` inside each variant for exact
+setup steps, and
 [docs/proxmox-template-best-practices.md](docs/proxmox-template-best-practices.md)
 for template-level (storage, filesystem, UEFI/TPM) guidance shared across
 all three.
@@ -26,17 +29,9 @@ all three.
 [pve-templates/](pve-templates/) has the scripts that build the three
 `vm_template_name` templates the variants above clone from (`vm-oracle10`,
 `vm-alma10`, `vm-win2025`) — run on the Proxmox host itself, not part of
-the Terraform/Ansible flow.
-
-## GitLab CI/CD
-
-The root [.gitlab-ci.yml](.gitlab-ci.yml) is the only file GitLab
-auto-discovers; it `include`s each variant's own `.gitlab-ci.yml`, running
-only the variant whose files changed (or the one named by the `VM_TARGET`
-pipeline variable). Each variant's pipeline runs `validate` automatically
-and gates `plan` → `apply` → (`configure` →, Linux variants only)
-`destroy` as manual jobs, with Terraform state kept in GitLab's managed
-Terraform state backend.
+the Terraform/Ansible flow, and not something you'd copy alongside a
+variant (build the templates once, point any number of deployed repos at
+them by name).
 
 ## Original requirements
 

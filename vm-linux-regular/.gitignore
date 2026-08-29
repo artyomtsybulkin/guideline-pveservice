@@ -5,12 +5,11 @@ terraform/.terraform/
 terraform/.terraform.lock.hcl
 terraform/terraform.tfstate
 terraform/terraform.tfstate.*
-terraform/terraform.tfvars
 terraform/*.tfplan
 
-# Ansible generated artifacts / local overrides
+# Ansible generated artifact (rendered fresh by scripts/configure.sh on
+# every run — never edit or commit it directly)
 ansible/inventory/inventory.ini
-ansible/group_vars/all.yml
 *.retry
 
 # CI job artifacts

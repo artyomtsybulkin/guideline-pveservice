@@ -1,5 +1,5 @@
-# Variables shared by every host in the inventory.
-# Copy to all.yml and adjust per-environment. all.yml is gitignored.
+# Variables shared by every host in the inventory. Commit this file —
+# it's the actual configuration for this deployment.
 service_name: example-service
 
 # Custom service/application/package roles to apply after

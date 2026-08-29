@@ -1,11 +1,17 @@
-# CI/CD pipeline for the vm-windows-regular Proxmox VM. Included from the
-# repo root's .gitlab-ci.yml (GitLab only auto-discovers the root file).
+# CI/CD pipeline for this VM. This file is meant to sit at the ROOT of its
+# own dedicated GitLab repo (copy this whole vm-windows-regular/ folder
+# out, its contents become that repo's root) — GitLab only auto-discovers
+# a root .gitlab-ci.yml.
 # Stages: validate -> plan -> apply (manual) -> destroy (manual). No
 # configure stage: this variant is Terraform-only for now (see README.md).
 #
-# Required CI/CD variables (Settings > CI/CD > Variables):
-#   TF_VAR_pve_api_endpoint, TF_VAR_pve_api_token (masked), TF_VAR_pve_node,
-#   TF_VAR_vm_template_name, TF_VAR_vm_name — terraform reads TF_VAR_* automatically.
+# Configure this deployment two ways:
+#   - terraform/terraform.tfvars (committed, no secrets) — vm_name,
+#     vm_template_name, vm_id, vm_cores, vm_memory, vm_disk_size, etc.
+#   - GitLab CI/CD variables (Settings > CI/CD > Variables), required:
+#       TF_VAR_pve_api_endpoint, TF_VAR_pve_api_token (masked), TF_VAR_pve_node
+#     Any TF_VAR_<name> also overrides the matching value from
+#     terraform.tfvars, e.g. to bump vm_memory for one pipeline run.
 # GitLab-managed Terraform state needs no extra variables: CI_API_V4_URL,
 # CI_PROJECT_ID and CI_JOB_TOKEN are provided automatically (see scripts/tf-init.sh).
 
@@ -15,49 +21,45 @@ stages:
   - apply
   - destroy
 
-variables:
-  TF_STATE_NAME: vm-windows-regular
-
-.windows_tf_before_script: &windows_tf_before_script
+.tf_before_script: &tf_before_script
   - apk add --no-cache bash
-  - cd vm-windows-regular
   - ./scripts/tf-init.sh
 
-windows:validate:
+validate:
   stage: validate
   image: hashicorp/terraform:1.9
-  before_script: *windows_tf_before_script
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform validate
 
-windows:plan:
+plan:
   stage: plan
   image: hashicorp/terraform:1.9
-  before_script: *windows_tf_before_script
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform plan -out=plan.tfplan
   artifacts:
     paths:
-      - vm-windows-regular/terraform/plan.tfplan
+      - terraform/plan.tfplan
     expire_in: 1 day
 
-windows:apply:
+apply:
   stage: apply
   image: hashicorp/terraform:1.9
-  needs: ["windows:plan"]
-  before_script: *windows_tf_before_script
+  needs: ["plan"]
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform apply -auto-approve plan.tfplan
     - terraform -chdir=terraform output -raw vm_ipv4_address > vm_ipv4_address.txt
   artifacts:
     paths:
-      - vm-windows-regular/vm_ipv4_address.txt
+      - vm_ipv4_address.txt
   when: manual
 
-windows:destroy:
+destroy:
   stage: destroy
   image: hashicorp/terraform:1.9
-  before_script: *windows_tf_before_script
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform destroy -auto-approve
   when: manual

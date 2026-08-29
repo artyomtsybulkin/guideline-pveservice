@@ -1,0 +1,9 @@
+# Variables shared by every host in the inventory. Commit this file —
+# it's the actual configuration for this deployment.
+service_name: example-service
+
+# Custom service/application/package roles to apply after base/first-boot.
+# See ../roles/README.md for how to add one. Empty by default — playbook.yml
+# treats an unset service_roles the same as [].
+# service_roles:
+#   - my-service

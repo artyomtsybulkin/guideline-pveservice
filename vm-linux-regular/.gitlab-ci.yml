@@ -1,13 +1,19 @@
-# CI/CD pipeline for the vm-linux-regular Proxmox VM. Included from the
-# repo root's .gitlab-ci.yml (GitLab only auto-discovers the root file).
+# CI/CD pipeline for this VM. This file is meant to sit at the ROOT of its
+# own dedicated GitLab repo (copy this whole vm-linux-regular/ folder out,
+# its contents become that repo's root) — GitLab only auto-discovers a
+# root .gitlab-ci.yml.
 # Stages: validate -> plan -> apply (manual) -> configure (manual) -> destroy (manual).
 #
-# Required CI/CD variables (Settings > CI/CD > Variables):
-#   TF_VAR_pve_api_endpoint, TF_VAR_pve_api_token (masked), TF_VAR_pve_node,
-#   TF_VAR_vm_template_name, TF_VAR_vm_name  — terraform reads TF_VAR_* automatically,
-#   FABRICATOR_PRIVATE_KEY (masked, protected) — read by scripts/fetch-secret.sh
-#     with SECRET_BACKEND=gitlab; swap for GitLab's native Vault/AWS `secrets:`
-#     keyword if you have one of those set up instead.
+# Configure this deployment two ways:
+#   - terraform/terraform.tfvars (committed, no secrets) — vm_name,
+#     vm_template_name, vm_id, vm_cores, vm_memory, vm_disk_size, etc.
+#   - GitLab CI/CD variables (Settings > CI/CD > Variables), required:
+#       TF_VAR_pve_api_endpoint, TF_VAR_pve_api_token (masked), TF_VAR_pve_node
+#       FABRICATOR_PRIVATE_KEY (masked, protected) — read by
+#         scripts/fetch-secret.sh with SECRET_BACKEND=gitlab; swap for
+#         GitLab's native Vault/AWS `secrets:` keyword if set up instead.
+#     Any TF_VAR_<name> also overrides the matching value from
+#     terraform.tfvars, e.g. to bump vm_memory for one pipeline run.
 # GitLab-managed Terraform state needs no extra variables: CI_API_V4_URL,
 # CI_PROJECT_ID and CI_JOB_TOKEN are provided automatically (see scripts/tf-init.sh).
 
@@ -19,61 +25,58 @@ stages:
   - destroy
 
 variables:
-  TF_STATE_NAME: vm-linux-regular
   SECRET_BACKEND: gitlab
 
-.linux_tf_before_script: &linux_tf_before_script
+.tf_before_script: &tf_before_script
   - apk add --no-cache bash
-  - cd vm-linux-regular
   - ./scripts/tf-init.sh
 
-linux:validate:
+validate:
   stage: validate
   image: hashicorp/terraform:1.9
-  before_script: *linux_tf_before_script
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform validate
 
-linux:plan:
+plan:
   stage: plan
   image: hashicorp/terraform:1.9
-  before_script: *linux_tf_before_script
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform plan -out=plan.tfplan
   artifacts:
     paths:
-      - vm-linux-regular/terraform/plan.tfplan
+      - terraform/plan.tfplan
     expire_in: 1 day
 
-linux:apply:
+apply:
   stage: apply
   image: hashicorp/terraform:1.9
-  needs: ["linux:plan"]
-  before_script: *linux_tf_before_script
+  needs: ["plan"]
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform apply -auto-approve plan.tfplan
     - terraform -chdir=terraform output -raw vm_ipv4_address > vm_ipv4_address.txt
   artifacts:
     paths:
-      - vm-linux-regular/vm_ipv4_address.txt
+      - vm_ipv4_address.txt
   when: manual
 
-linux:configure:
+configure:
   stage: configure
   image: python:3.12-slim
-  needs: ["linux:apply"]
+  needs: ["apply"]
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends openssh-client && rm -rf /var/lib/apt/lists/*
     - pip install --no-cache-dir ansible-core
   script:
-    - cd vm-linux-regular
     - ./scripts/configure.sh "$(cat vm_ipv4_address.txt)"
   when: manual
 
-linux:destroy:
+destroy:
   stage: destroy
   image: hashicorp/terraform:1.9
-  before_script: *linux_tf_before_script
+  before_script: *tf_before_script
   script:
     - terraform -chdir=terraform destroy -auto-approve
   when: manual
