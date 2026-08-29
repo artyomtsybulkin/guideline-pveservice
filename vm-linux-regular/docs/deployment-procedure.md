@@ -16,11 +16,20 @@ Linux 10+ — the `base` role uses `dnf`.
    fetched key path (`ansible/inventory/inventory.ini.tpl` →
    `inventory.ini`).
 5. **Ansible** (`ansible/`) connects as `fabricator` and runs
-   `playbook.yml`, which applies the `base` role: enables EPEL
-   (distro-specific), upgrades all packages, installs the baseline package
-   set (including `qemu-guest-agent`, enabled and started) and
-   `zram-generator`, per
-   [instructions/instruction-01.txt](../../instructions/instruction-01.txt).
+   `playbook.yml`, which applies:
+   - `base` — enables EPEL (distro-specific), upgrades all packages,
+     installs the baseline package set (including `qemu-guest-agent`,
+     enabled and started) and `zram-generator`, per
+     [instructions/instruction-01.txt](../../instructions/instruction-01.txt),
+   - `first-boot` — installs (but does not run) a one-shot systemd service
+     that regenerates per-VM identifiers — `machine-id`, SSH host keys —
+     plus general cleanup, per
+     [instructions/instruction-02.txt](../../instructions/instruction-02.txt).
+     It fires on this VM's *next* reboot, not during this Ansible run,
+     because it deletes the SSH host keys Ansible's own connection is
+     using; a marker file (`/etc/pveservice-first-boot-done`) keeps it to
+     exactly one run. **Reboot the VM once after initial provisioning**
+     (whenever convenient) to actually trigger it.
 
 `scripts/deploy.sh` runs steps 1–5 locally in order (terraform apply, then
 `scripts/configure.sh` for the Ansible half). `scripts/destroy.sh` tears the

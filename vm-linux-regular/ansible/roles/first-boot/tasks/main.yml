@@ -1,0 +1,33 @@
+---
+# first-boot role: installs a one-shot systemd service that regenerates
+# per-VM identifiers (machine-id, SSH host keys) and does general cleanup
+# the first time this VM reboots after provisioning.
+#
+# This is deferred to the *next* boot rather than run now: Ansible reaches
+# this VM over the very SSH connection whose host keys the script would
+# delete, so running it synchronously here would pull the rug out from
+# under the current provisioning session. The unit is gated by a marker
+# file (ConditionPathExists) so it still only ever fires once, whenever
+# that next boot happens.
+
+- name: Install first-boot generalization script
+  ansible.builtin.copy:
+    src: pveservice-first-boot.sh
+    dest: /usr/local/sbin/pveservice-first-boot.sh
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Install first-boot systemd unit
+  ansible.builtin.copy:
+    src: pveservice-first-boot.service
+    dest: /etc/systemd/system/pveservice-first-boot.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable first-boot service for the next boot
+  ansible.builtin.systemd:
+    name: pveservice-first-boot.service
+    enabled: true
+    daemon_reload: true

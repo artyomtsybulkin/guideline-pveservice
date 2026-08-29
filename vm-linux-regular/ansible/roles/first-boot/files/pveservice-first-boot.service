@@ -1,0 +1,14 @@
+[Unit]
+Description=One-time VM generalization (machine-id, SSH host keys, cleanup)
+ConditionPathExists=!/etc/pveservice-first-boot-done
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pveservice-first-boot.sh
+ExecStartPost=/usr/bin/touch /etc/pveservice-first-boot-done
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

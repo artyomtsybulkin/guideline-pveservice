@@ -27,7 +27,16 @@ Linux 10+.
    - `docker-ce` — adds Docker's official RHEL repo and installs
      `docker-ce`, `docker-ce-cli`, `containerd.io`, the buildx and
      compose plugins, enables the `docker` service, and adds `fabricator`
-     to the `docker` group.
+     to the `docker` group,
+   - `first-boot` — installs (but does not run) a one-shot systemd service
+     that regenerates per-VM identifiers — `machine-id`, SSH host keys —
+     plus general cleanup, per
+     [instructions/instruction-02.txt](../../instructions/instruction-02.txt).
+     It fires on this VM's *next* reboot, not during this Ansible run,
+     because it deletes the SSH host keys Ansible's own connection is
+     using; a marker file (`/etc/pveservice-first-boot-done`) keeps it to
+     exactly one run. **Reboot the VM once after initial provisioning**
+     (whenever convenient) to actually trigger it.
 
 `scripts/deploy.sh` runs steps 1–5 locally in order (terraform apply, then
 `scripts/configure.sh` for the Ansible half). `scripts/destroy.sh` tears the

@@ -10,3 +10,4 @@
       vars:
         base_install_zram: false
     - docker-ce
+    - first-boot
