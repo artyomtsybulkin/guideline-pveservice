@@ -33,6 +33,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     datastore_id = var.vm_datastore_id
   }
 
+  # No vlan_id set: vmbr0 is used untagged.
   network_device {
     bridge = var.vm_network_bridge
   }

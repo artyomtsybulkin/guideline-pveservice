@@ -5,9 +5,6 @@
   become: true
 
   roles:
-    # zram is skipped on Docker hosts per instructions/instruction-01.txt.
-    - role: base
-      vars:
-        base_install_zram: false
+    - base
     - docker-ce
     - first-boot

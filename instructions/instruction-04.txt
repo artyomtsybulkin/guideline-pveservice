@@ -1,0 +1,6 @@
+Let's use target vm directory: vm-directory
+Default CPU cores: 4
+Memory: 4Gb for Linux and 8Gb for Windows
+Default disk size: 64Gb for Linux, 128Gb for Windows.
+Network vmbr0 w/o VLAN tag
+Check also that zram not installed on docker instance, it seems you have missed it.

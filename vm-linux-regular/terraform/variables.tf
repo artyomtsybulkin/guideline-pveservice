@@ -43,25 +43,25 @@ variable "vm_id" {
 variable "vm_cores" {
   description = "Number of vCPU cores."
   type        = number
-  default     = 2
+  default     = 4
 }
 
 variable "vm_memory" {
   description = "Memory in MB."
   type        = number
-  default     = 2048
+  default     = 4096
 }
 
 variable "vm_disk_size" {
   description = "Primary disk size in GB. Must be >= the template's disk size."
   type        = number
-  default     = 20
+  default     = 64
 }
 
 variable "vm_datastore_id" {
   description = "Datastore to place the cloned disk on."
   type        = string
-  default     = "local-lvm"
+  default     = "vm-directory"
 }
 
 variable "vm_network_bridge" {

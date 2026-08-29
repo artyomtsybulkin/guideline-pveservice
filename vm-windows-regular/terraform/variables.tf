@@ -55,13 +55,13 @@ variable "vm_memory" {
 variable "vm_disk_size" {
   description = "Primary (system) disk size in GB. Must be >= the template's disk size."
   type        = number
-  default     = 80
+  default     = 128
 }
 
 variable "vm_datastore_id" {
   description = "Datastore to place the cloned disk on. Use a zfspool-type storage on the ZFS RAID10 pool, not a directory storage, for raw (non-qcow2) disks."
   type        = string
-  default     = "local-lvm"
+  default     = "vm-directory"
 }
 
 variable "vm_network_bridge" {

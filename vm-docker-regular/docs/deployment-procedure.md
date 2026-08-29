@@ -21,9 +21,11 @@ Linux 10+.
      installs the baseline package set (including `qemu-guest-agent`,
      enabled and started), per
      [instructions/instruction-01.txt](../../instructions/instruction-01.txt).
-     `zram-generator` is skipped here (`base_install_zram: false`) — the
+     This copy of the role has no `zram-generator` task at all — the
      instructions call out Docker hosts as the one case that shouldn't
-     get it,
+     get it, so the task is simply absent here rather than conditional
+     (see `vm-linux-regular`'s copy of the role for the version that
+     installs it),
    - `docker-ce` — adds Docker's official RHEL repo and installs
      `docker-ce`, `docker-ce-cli`, `containerd.io`, the buildx and
      compose plugins, enables the `docker` service, and adds `fabricator`

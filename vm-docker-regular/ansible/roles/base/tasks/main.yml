@@ -2,6 +2,10 @@
 # base role: OS updates and baseline packages common to every service VM.
 # Template OS is Rocky/AlmaLinux/Oracle Linux 10+ (RHEL family); see
 # ../../../../../instructions/instruction-01.txt for the source list.
+#
+# This is the Docker-host copy of this file: it deliberately has no
+# zram-generator task (not installed on Docker hosts, per that same
+# instruction) — see vm-linux-regular's copy for the version that installs it.
 
 - name: Enable EPEL (Oracle Linux)
   ansible.builtin.dnf:
@@ -51,9 +55,3 @@
     name: qemu-guest-agent
     enabled: true
     state: started
-
-- name: Install zram-generator
-  ansible.builtin.dnf:
-    name: zram-generator
-    state: present
-  when: base_install_zram
