@@ -1,0 +1,57 @@
+I have collected configurations of couple machine templates below.
+1. Can you check them against best practices for Linux VMs (Alma/Oracle 10+) on Proxmox.
+    Conditionas:
+    - XFS inside guest
+    - underlying storage qcow2 or raw on ZFS ZRAID e.g. RAID10 on Proxmox server
+2. I also have prepared directory: C:\Workspace\my-github\guideline-pveservice\vm-windows-regular
+- I need here only terraform and gilab automation to deploy Windows from template for now
+- Also check best practices and prepare configuration for Windows VM on Proxmox:
+    Conditiona:
+    - NTFS/ReFS inside guest
+    - underlying storage qcow2 or raw on ZFS ZRAID e.g. RAID10 on Proxmox server
+
+Collected: configurations I have:
+
+root@s08:~# qm config 163
+agent: 1
+balloon: 0
+bios: ovmf
+boot: order=scsi0
+cores: 4
+cpu: host
+efidisk0: vm-directory:163/base-163-disk-0.qcow2,efitype=4m,ms-cert=2023k,pre-enrolled-keys=1,size=528K
+machine: q35
+memory: 4096
+meta: creation-qemu=11.0.0,ctime=1785230494
+name: vm-oracle10
+net0: virtio=BC:24:11:84:9F:2C,bridge=vmbr0,firewall=1
+numa: 0
+ostype: l26
+scsi0: vm-directory:163/base-163-disk-1.qcow2,discard=on,iothread=1,size=64G,ssd=1
+scsihw: virtio-scsi-single
+smbios1: uuid=fa818032-7a6d-4221-b2f0-6ad413a734a4
+sockets: 1
+template: 1
+vmgenid: ce3c8de0-1558-4f09-ade0-87b698497477
+
+root@s08:~# qm config 161
+agent: 1
+balloon: 0
+bios: ovmf
+boot: order=scsi0;net0
+cores: 4
+cpu: host
+efidisk0: vm-directory:161/vm-161-disk-0.qcow2,efitype=4m,ms-cert=2023k,pre-enrolled-keys=1,size=528K
+machine: q35
+memory: 4096
+meta: creation-qemu=11.0.0,ctime=1785230302
+name: vm-alma10
+net0: virtio=BC:24:11:07:2E:5B,bridge=vmbr0,firewall=1
+numa: 0
+ostype: l26
+scsi0: local-lvm:vm-161-disk-0,discard=on,iothread=1,size=64G,ssd=1
+scsihw: virtio-scsi-single
+smbios1: uuid=f2ee8983-0769-4a10-a774-58c5b83de5b4
+sockets: 1
+vmgenid: 14cd38f7-8d83-42f2-bc1b-6f2037892a29
+ 

@@ -2,7 +2,8 @@
 # .gitlab-ci.yml). Delegates to whichever variant's own pipeline is
 # relevant: on push, only the variant whose files changed runs; to deploy
 # on demand regardless of what changed, run a pipeline with the CI/CD
-# variable VM_TARGET set to "vm-linux-regular" or "vm-docker-regular".
+# variable VM_TARGET set to "vm-linux-regular", "vm-docker-regular", or
+# "vm-windows-regular".
 # Requires GitLab >= 14.2 for `rules:` under `include:`.
 
 include:
@@ -16,3 +17,8 @@ include:
       - if: '$VM_TARGET == "vm-docker-regular"'
       - changes:
           - vm-docker-regular/**/*
+  - local: vm-windows-regular/.gitlab-ci.yml
+    rules:
+      - if: '$VM_TARGET == "vm-windows-regular"'
+      - changes:
+          - vm-windows-regular/**/*
