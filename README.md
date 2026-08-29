@@ -21,6 +21,13 @@ inside each for details, and
 for template-level (storage, filesystem, UEFI/TPM) guidance shared across
 all three.
 
+## Building the templates
+
+[pve-templates/](pve-templates/) has the scripts that build the three
+`vm_template_name` templates the variants above clone from (`vm-oracle10`,
+`vm-alma10`, `vm-win2025`) — run on the Proxmox host itself, not part of
+the Terraform/Ansible flow.
+
 ## GitLab CI/CD
 
 The root [.gitlab-ci.yml](.gitlab-ci.yml) is the only file GitLab

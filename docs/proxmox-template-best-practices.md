@@ -99,7 +99,7 @@ cpu: host
 efidisk0: <zfspool-storage-id>:vm-<id>-disk-0,efitype=4m,pre-enrolled-keys=1,size=4M
 machine: q35
 memory: 8192
-name: vm-win2022
+name: vm-win2025
 net0: virtio=<mac>,bridge=vmbr0,firewall=1
 numa: 0
 ostype: win11
