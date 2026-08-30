@@ -31,8 +31,9 @@ its `.gitlab-ci.yml` already assumes it's sitting at that repo's root.
      exactly what each one is.
 
 3. **Run the pipeline** — push to the repo (or trigger one manually) and
-   run the jobs in order: `validate` (automatic) → `plan` → `apply` →
-   `destroy` (the last two are manual gates).
+   run the jobs in order: `security` (Trivy scan) → `validate` (both
+   automatic) → `plan` → `apply` → `destroy` (the last two are manual
+   gates).
 
 ## Layout
 
@@ -41,8 +42,8 @@ its `.gitlab-ci.yml` already assumes it's sitting at that repo's root.
 - `terraform/terraform.tfvars` — committed per-deployment config
 - `scripts/deploy.sh` — terraform apply, prints the IP (local runs only)
 - `scripts/destroy.sh` — tears the VM down
-- `.gitlab-ci.yml` — `validate` (automatic) → `plan` → `apply` (manual) →
-  `destroy` (manual)
+- `.gitlab-ci.yml` — `security` (Trivy scan) → `validate` (both
+  automatic) → `plan` → `apply` (manual) → `destroy` (manual)
 
 See [docs/deployment-procedure.md](docs/deployment-procedure.md) for the
 full walkthrough.

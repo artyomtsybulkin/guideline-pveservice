@@ -38,8 +38,9 @@ its `.gitlab-ci.yml` already assumes it's sitting at that repo's root.
      [docs/deployment-procedure.md](docs/deployment-procedure.md).
 
 4. **Run the pipeline** — push to the repo (or trigger one manually) and
-   run the jobs in order: `validate` (automatic) → `plan` → `apply` →
-   `configure` → `destroy` (the last three are manual gates).
+   run the jobs in order: `security` (Trivy scan) → `validate` (both
+   automatic) → `plan` → `apply` → `configure` → `destroy` (the last
+   three are manual gates).
 
 ## Layout
 
@@ -54,8 +55,9 @@ its `.gitlab-ci.yml` already assumes it's sitting at that repo's root.
     [ansible/roles/README.md](ansible/roles/README.md)
 - `scripts/` — what the CI jobs (and `deploy.sh`/`destroy.sh` for local
   runs) call internally; see [docs/deployment-procedure.md](docs/deployment-procedure.md)
-- `.gitlab-ci.yml` — `validate` (automatic) → `plan` → `apply` (manual) →
-  `configure` (manual) → `destroy` (manual)
+- `.gitlab-ci.yml` — `security` (Trivy scan) → `validate` (both
+  automatic) → `plan` → `apply` (manual) → `configure` (manual) →
+  `destroy` (manual)
 
 See [docs/deployment-procedure.md](docs/deployment-procedure.md) for the
 full walkthrough.

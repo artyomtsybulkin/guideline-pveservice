@@ -29,7 +29,16 @@ VM back down. CI runs the same steps as separate jobs instead (below).
 | `scripts/tf-init.sh` | `terraform init` against GitLab-managed state, used by every other script and by CI |
 | `scripts/deploy.sh` | Local convenience wrapper: terraform apply, print IP |
 | `scripts/destroy.sh` | `terraform destroy` |
-| `.gitlab-ci.yml` | CI pipeline: validate → plan → apply (manual) → destroy (manual) |
+| `.gitlab-ci.yml` | CI pipeline: security → validate → plan → apply (manual) → destroy (manual) |
+
+## Security scanning
+
+The `security` stage runs [Trivy](https://github.com/aquasecurity/trivy)
+(`trivy fs --scanners misconfig,secret .`) before anything else — Terraform
+misconfigurations and accidentally-committed secrets, no vulnerability DB
+download needed. It fails the pipeline on any `HIGH`/`CRITICAL` finding;
+lower `--severity` or drop `--exit-code 1` in `.gitlab-ci.yml`'s `trivy`
+job to make it advisory instead.
 
 ## Running via GitLab CI/CD
 
